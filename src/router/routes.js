@@ -1,10 +1,16 @@
+import Login from 'pages/Login'
+import Register from 'pages/Register'
+import Profile from 'pages/Profile'
 
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/Index.vue') },
+      { path: 'login', component: Login },
+      { path: 'register', component: Register },
+      { path: 'profile', component: Profile }
     ]
   },
 

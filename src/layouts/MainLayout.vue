@@ -1,45 +1,32 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
+      <q-toolbar class="bg-black text-white">
+        <q-icon name="favorite" style="font-size: 26px;"/>
         <q-toolbar-title>
-          Quasar App
+          Project Aloha
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-space />
+        <q-btn flat round dense icon="more_vert">
+          <q-menu auto-close :offset="[110, 0]">
+            <q-list style="min-width: 150px">
+              <q-item v-if="!isAuthenticated" clickable @click="onSignIn">
+                <q-item-section>Sign-In</q-item-section>
+              </q-item>
+              <q-item v-if="!isAuthenticated" clickable @click="onRegister">
+                <q-item-section>Register</q-item-section>
+              </q-item>
+              <q-item v-if="isAuthenticated" clickable @click="onProfile">
+                <q-item-section>Profile</q-item-section>
+              </q-item>
+              <q-item v-if="isAuthenticated" clickable @click="onSignOut">
+                <q-item-section>Signout</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -48,71 +35,33 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
 
-  components: {
-    EssentialLink
+  computed: {
+    isAuthenticated () {
+      return this.$store.state.user.authenticated
+    }
   },
 
-  setup () {
-    const leftDrawerOpen = ref(false)
+  methods: {
+    onSignIn () {
+      this.$router.push('/login')
+    },
 
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+    onRegister () {
+      this.$router.push('/register')
+    },
+
+    onProfile () {
+      this.$router.push('/profile')
+    },
+
+    onSignOut () {
+      this.$store.dispatch('user/logoutUser')
+      this.$router.push('/profile')
     }
   }
 })
